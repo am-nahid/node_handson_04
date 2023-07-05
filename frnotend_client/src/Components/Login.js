@@ -23,7 +23,7 @@ function Login() {
   const handleButton = (e) => {
     e.preventDefault();
     const { email, password } = data;
-    const API = "http://localhost:7070/user/login";
+    const API = "https://register-login-api.onrender.com/user/login";
     // console.log("working");
     // navigate("/home");
     if (email && password) {
@@ -31,7 +31,7 @@ function Login() {
         .post(API, data)
         .then((res) => {
           // alert("User registered");
-          console.log(res.data);
+          // console.log(res.data);
           navigate("/home");
         })
         .catch((err) => console.log(err));

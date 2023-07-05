@@ -17,11 +17,11 @@ function NewRegister() {
 
   const handleButton = (e) => {
     e.preventDefault();
-    setStore({ ...data });
-    console.log(store,"store");
-    console.log("data", data);
+    // setStore({ ...data });
+    // console.log(store,"store");
+    // console.log("data", data);
     const { email, password } = data;
-    const API = "http://localhost:7070/user/register"
+    const API = "https://register-login-api.onrender.com/user/register"
     
     setData({
       name: "",
@@ -33,7 +33,7 @@ function NewRegister() {
       axios.post(API,data)
         .then(res => {
           // alert("user registered")
-          console.log(res.data);
+          setStore(res.data);
           navigate('/home');
         })
         .catch((err) => console.log(err));
