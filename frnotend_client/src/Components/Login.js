@@ -27,17 +27,19 @@ function Login() {
     // console.log("working");
     // navigate("/home");
     if (email && password) {
-      axios
-        .post(API, data)
+      axios.post(API, data)
         .then((res) => {
-          // alert("User registered");
-          // console.log(res.data);
+          console.log(res.data);
+          if(res.data!=="wrong password"){
           navigate("/home");
+          }else{
+            setError("wrong password.");
+          }
         })
         .catch((err) => console.log(err));
     }
     else {
-      setError("Please enter email and password.");
+      setError("Please enter correct email and password.");
     }
   };
 
@@ -83,7 +85,7 @@ function Login() {
               required
             />
           </div>
-          {error && <span style={{ color: "red" }}>{error}</span>}
+          {error && <span className="errMsg">{error}</span>}
           <button className="Sbutn" onClick={handleButton}>
             Login
           </button>
