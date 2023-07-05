@@ -20,6 +20,7 @@ const register=(req,res)=>{
         const salt = bcrypt.genSaltSync(saltRound)
 
         const hashedPassword = bcrypt.hashSync(data.password,salt)
+        const token = jwt.sign({user:data.email},secretKey,{expiresIn:'3d'})
 
         const tempObj = {
             name:data.name,
@@ -27,9 +28,14 @@ const register=(req,res)=>{
             email:data.email,
             password:hashedPassword
         }
-
-        storedData.push(tempObj)
-        res.send(storedData)
+        const options = {
+            expires: new Date(
+               Date.now()+5*24*60*60
+            )
+          }
+          storedData.push(tempObj)
+      
+          res.status(200).cookie("tokenName",token,options).send(storedData)
     }
 }
 
@@ -37,24 +43,45 @@ const login=(req,res)=>{
     // res.send({msg:"login"})
     const data = req.body;
     const user = storedData.find((item) => item.email === data.email);
-    if(user.email ===data.email){
+    if(user && user.email ===data.email){
         // res.send("user has logged in succesfully")
         const validate = bcrypt.compareSync(data.password,user.password)
         const token = jwt.sign({user:user.email},secretKey,{expiresIn:3600})
         if(validate){
-            res.send({
+            const userInfo = {
                 email:user.email,
-               password:user.password,
-               token:token
-            })
-        }    }
-    else{
-        res.send("User has not registered, please try again")
+                password:user.password ,
+                token:token
+             }
+             const options = {
+                expires: new Date(
+                   Date.now()+5*24*60*60
+                )
+              }
+             res.status(200).cookie("tokenName",token,options).send(userInfo)
+          } else{
+             res.send("Invalid Password")
+          }
+       }else{
+          res.send("user has not registered")
+       }
+    
+    }
+   
+
+const logout=(req,res)=>{
+    res.cookie("tokenName",{
+        expires:new Date(Date.now())
+    })
+    res.status(200).json({
+        msg:"user LogedOut"
+    })
+}
+
+const allUsers = (req,res)=>{
+    if(storedData){
+        res.send(storedData)
     }
 }
 
-const logout=(req,res)=>{
-    res.send({msg:"logout page"})
-}
-
-module.exports = {register, login, logout}
+module.exports = {register, login, logout,allUsers}
